@@ -1,2 +1,3 @@
-# npm
-NPM package provider for AnyPackage
+# AnyPackage.Node
+
+Node (NPM) package provider for AnyPackage.
