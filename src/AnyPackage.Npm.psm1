@@ -2,7 +2,19 @@ using module AnyPackage
 using namespace AnyPackage.Provider
 
 [PackageProvider('Npm')]
-class NpmProvider : PackageProvider, IGetPackage {
+class NpmProvider : PackageProvider, IGetPackage, IFindPackage {
+    [void] FindPackage ([PackageRequest] $request) {
+        $npmPackages = npm search $request.Name --json | ConvertFrom-Json
+
+        foreach ($item in $npmPackages) {
+            if ($request.IsMatch($item.name, $item.version)) {
+                $metadata = $item | ConvertTo-Metadata
+                $package = [PackageInfo]::new($item.name, $item.version, $null, $item.description, $null, $metadata, $request.ProviderInfo)
+                $request.WritePackage($package)
+            }
+        }
+    }
+    
     [void] GetPackage ([PackageRequest] $request) {
         $prefix = npm prefix --global
         $globalNpmPackagePath = Join-Path -Path $prefix -ChildPath 'node_modules'
