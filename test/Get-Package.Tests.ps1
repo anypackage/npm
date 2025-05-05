@@ -13,9 +13,10 @@ Describe Get-Package {
 
     Context 'with no parameters' {
         It 'should return results' {
-            npm config list -g -l
-            
-            npm list -g
+            $config = npm config list -g -l
+            $packages = npm list -g
+            Write-Verbose $config -Verbose
+            Write-Verbose $packages -Verbose            
 
             Get-Package |
             Should -Not -BeNullOrEmpty
