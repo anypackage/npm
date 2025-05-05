@@ -13,7 +13,7 @@ Describe Get-Package {
 
     Context 'with no parameters' {
         It 'should return results' {
-            npm config list -g -l | Write-Verbose -Verbose
+            npm config list prefix -g -l | Write-Verbose -Verbose
             npm list -g | Write-Verbose -Verbose
 
             Get-Package |
