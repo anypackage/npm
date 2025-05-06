@@ -1,5 +1,3 @@
 @{
-    ExcludeRules = @(
-        'PSAvoidGlobalVars'
-    )
+
 }
