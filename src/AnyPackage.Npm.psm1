@@ -1,4 +1,4 @@
-using module AnyPackage
+﻿using module AnyPackage
 using namespace AnyPackage.Provider
 
 [PackageProvider('Npm')]
@@ -14,10 +14,17 @@ class NpmProvider : PackageProvider, IGetPackage, IFindPackage {
             }
         }
     }
-    
+
     [void] GetPackage ([PackageRequest] $request) {
         $prefix = npm prefix --global
-        $globalNpmPackagePath = Join-Path -Path $prefix -ChildPath 'node_modules'
+
+        if ($global:PSEdition -eq 'Desktop' -or $global:IsWindows) {
+            $globalNpmPackagePath = Join-Path -Path $prefix -ChildPath 'node_modules'
+        }
+        else {
+            $globalNpmPackagePath = Join-Path -Path $prefix -ChildPath 'lib/node_modules'
+        }
+
         $request.WriteVerbose("Global installed packages directory: $globalNpmPackagePath")
 
         $packageJsonPath = Join-Path -Path $globalNpmPackagePath -ChildPath '*/package.json'
