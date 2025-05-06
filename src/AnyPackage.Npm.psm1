@@ -3,7 +3,7 @@ using namespace AnyPackage.Provider
 using namespace System.Management.Automation
 
 [PackageProvider('Npm')]
-class NpmProvider : PackageProvider, IGetPackage, IFindPackage, IInstallPackage {
+class NpmProvider : PackageProvider, IGetPackage, IFindPackage, IInstallPackage, IUninstallPackage {
     [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidUsingPositionalParameters', '')]
     [void] FindPackage ([PackageRequest] $request) {
         $npmPackages = npm search $request.Name --json | ConvertFrom-Json
@@ -62,6 +62,38 @@ class NpmProvider : PackageProvider, IGetPackage, IFindPackage, IInstallPackage 
         $spec = '{0}@{1}' -f $package.Name, $package.Version
 
         npm install $spec -g 2>&1 |
+            ForEach-Object {
+                if ($_ -is [ErrorRecord]) {
+                    $request.WriteError($_)
+                } else {
+                    $request.WriteVerbose($_)
+                }
+            }
+
+        if ($LASTEXITCODE -eq 0) {
+            $request.WritePackage($package)
+        }
+    }
+
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidGlobalVars', '')]
+    [void] UninstallPackage ([PackageRequest] $request) {
+        $getPackageParameters = @{
+            Name        = $request.Name
+            Provider    = $request.ProviderInfo.FullName
+            ErrorAction = 'SilentlyContinue'
+        }
+
+        if ($request.Version) {
+            $getPackageParameters['Version'] = $request.Version
+        }
+
+        $package = Get-Package @getPackageParameters
+
+        if (!$package) {
+            return
+        }
+
+        npm uninstall $request.Name -g 2>&1 |
             ForEach-Object {
                 if ($_ -is [ErrorRecord]) {
                     $request.WriteError($_)
