@@ -3,6 +3,7 @@ using namespace AnyPackage.Provider
 
 [PackageProvider('Npm')]
 class NpmProvider : PackageProvider, IGetPackage, IFindPackage {
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingPositionalParameters", "")]
     [void] FindPackage ([PackageRequest] $request) {
         $npmPackages = npm search $request.Name --json | ConvertFrom-Json
 
@@ -15,6 +16,7 @@ class NpmProvider : PackageProvider, IGetPackage, IFindPackage {
         }
     }
 
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidGlobalVars", "")]
     [void] GetPackage ([PackageRequest] $request) {
         $prefix = npm prefix --global
 
@@ -50,6 +52,7 @@ $MyInvocation.MyCommand.ScriptBlock.Module.OnRemove = {
 }
 
 function ConvertTo-Metadata {
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseSingularNouns", "")]
     [CmdletBinding()]
     [OutputType([hashtable])]
     param (
