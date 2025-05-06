@@ -5,7 +5,7 @@
     GUID = '39d4de27-226c-421d-8eae-7c0b76835fab'
     Author = 'Thomas Nieto'
     Copyright = '(c) 2025 Thomas Nieto. All rights reserved.'
-    Description = 'Npm provider for AnyPackage.'
+    Description = 'Node.js NPM provider for AnyPackage.'
     PowerShellVersion = '5.1'
     RequiredModules = @('AnyPackage')
     FunctionsToExport = @()
@@ -16,7 +16,7 @@
             Providers = 'Npm'
         }
         PSData = @{
-            Tags = @('AnyPackage', 'Provider')
+            Tags = @('AnyPackage', 'Provider', 'npm', 'node', 'node.js', 'Windows', 'Linux', 'MacOS')
             LicenseUri = 'https://github.com/anypackage/npm/blob/main/LICENSE'
             ProjectUri = 'https://github.com/anypackage/npm'
         }
