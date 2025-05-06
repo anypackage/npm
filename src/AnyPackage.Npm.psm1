@@ -43,6 +43,7 @@ class NpmProvider : PackageProvider, IGetPackage, IFindPackage, IInstallPackage 
         }
     }
 
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidGlobalVars', '')]
     [void] InstallPackage ([PackageRequest] $request) {
         $findPackageParameters = @{
             Name        = $request.Name
@@ -60,13 +61,7 @@ class NpmProvider : PackageProvider, IGetPackage, IFindPackage, IInstallPackage 
 
         $spec = '{0}@{1}' -f $package.Name, $package.Version
 
-        $output = if ($global:IsLinux -or $global:IsMacOS) {
-            sudo npm install $spec -g 2>&1
-        } else {
-            npm install $spec -g 2>&1
-        }
-        
-        $output |
+        npm install $spec -g 2>&1 |
             ForEach-Object {
                 if ($_ -is [ErrorRecord]) {
                     $request.WriteError($_)
