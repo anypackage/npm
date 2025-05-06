@@ -15,11 +15,13 @@ class NpmProvider : PackageProvider, IGetPackage, IFindPackage, IInstallPackage,
                 $packages = Invoke-WebRequest -Uri $url | Select-Object -ExpandProperty Content | ConvertFrom-Json | Select-Object -ExpandProperty versions
                 $versions = $packages | Get-Member -MemberType Properties | Select-Object -ExpandProperty Name
 
+                $source = [PackageSourceInfo]::new($config.registry, $config.registry, $request.ProviderInfo)
+
                 foreach ($version in $versions) {
                     if ($request.IsMatch([PackageVersion]$version)) {
                         $package = $packages.$version
                         $metadata = $package | ConvertTo-Metadata
-                        $packageInfo = [PackageInfo]::new($package.name, $version, $null, $package.description, $null, $metadata, $request.ProviderInfo)
+                        $packageInfo = [PackageInfo]::new($package.name, $version, $source, $package.description, $null, $metadata, $request.ProviderInfo)
                         $request.WritePackage($packageInfo)
                     }
                 }
