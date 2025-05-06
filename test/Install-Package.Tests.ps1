@@ -1,4 +1,4 @@
-#Requires -Modules AnyPackage.Scoop
+#Requires -Modules AnyPackage.Npm
 
 Describe Install-Package {
     AfterEach {
