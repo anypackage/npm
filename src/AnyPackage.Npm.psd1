@@ -1,6 +1,6 @@
 @{
     RootModule = 'AnyPackage.Npm.psm1'
-    ModuleVersion = '0.1.0'
+    ModuleVersion = '0.2.0'
     CompatiblePSEditions = @('Desktop', 'Core')
     GUID = '39d4de27-226c-421d-8eae-7c0b76835fab'
     Author = 'Thomas Nieto'
