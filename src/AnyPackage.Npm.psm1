@@ -47,9 +47,9 @@ class NpmProvider : PackageProvider, IGetPackage, IFindPackage, IInstallPackage 
         $findPackageParameters = @{
             Name        = $request.Name
             Provider    = $request.ProviderInfo.FullName
-            ErrorAction = 'Stop' 
+            ErrorAction = 'Stop'
         }
-        
+
         if ($request.Version) {
             $findPackageParameters['Version'] = $request.Version
         }
@@ -59,11 +59,17 @@ class NpmProvider : PackageProvider, IGetPackage, IFindPackage, IInstallPackage 
             Select-Object -First 1
 
         $spec = '{0}@{1}' -f $package.Name, $package.Version
+
+        $output = if ($global:IsLinux -or $global:IsMacOS) {
+            sudo npm install $spec -g 2>&1
+        } else {
+            npm install $spec -g 2>&1
+        }
         
-        npm install $spec -g 2>&1 |
+        $output |
             ForEach-Object {
                 if ($_ -is [ErrorRecord]) {
-                    $request.WriteError($_) 
+                    $request.WriteError($_)
                 } else {
                     $request.WriteVerbose($_)
                 }
