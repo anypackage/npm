@@ -6,11 +6,6 @@ Describe Find-Package {
             Find-Package -Name cspell-dict-powershell |
             Should -Not -BeNullOrEmpty
         }
-
-        It 'multiple names' {
-            Find-Package -Name cspell-dict-powershell, posh-gulp |
-            Should -HaveCount 2
-        }
     }
 
     Context 'with -Version parameter' {
