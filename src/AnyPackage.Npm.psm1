@@ -9,10 +9,20 @@ class NpmProvider : PackageProvider, IGetPackage, IFindPackage, IInstallPackage,
         $npmPackages = npm search $request.Name --json | ConvertFrom-Json
 
         foreach ($item in $npmPackages) {
-            if ($request.IsMatch($item.name, $item.version)) {
-                $metadata = $item | ConvertTo-Metadata
-                $package = [PackageInfo]::new($item.name, $item.version, $null, $item.description, $null, $metadata, $request.ProviderInfo)
-                $request.WritePackage($package)
+            if ($request.IsMatch($item.name)) {
+                $config = npm config list registry -g --json | ConvertFrom-Json
+                $url = "{0}/{1}" -f $config.registry, $item.name
+                $packages = Invoke-WebRequest -Uri $url | Select-Object -ExpandProperty Content | ConvertFrom-Json | Select-Object -ExpandProperty versions
+                $versions = $packages | Get-Member -MemberType Properties | Select-Object -ExpandProperty Name
+
+                foreach ($version in $versions) {
+                    if ($request.IsMatch([PackageVersion]$version)) {
+                        $package = $packages.$version
+                        $metadata = $package | ConvertTo-Metadata
+                        $packageInfo = [PackageInfo]::new($package.name, $version, $null, $package.description, $null, $metadata, $request.ProviderInfo)
+                        $request.WritePackage($packageInfo)
+                    }
+                }
             }
         }
     }
